@@ -1,7 +1,7 @@
 FROM conda/miniconda2
 
 # System packages
-RUN apt-get update && apt-get install -y curl git
+RUN apt-get update && apt-get install -y curl git gcc
 
 RUN conda install -y ipython tensorflow-gpu
 RUN conda install -y -c ilastik pyklb
