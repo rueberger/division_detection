@@ -26,7 +26,7 @@ ENTRYPOINT [ "/usr/bin/tini", "--" ]
 # System packages
 RUN apt-get update && apt-get install -y curl git gcc
 
-RUN conda install -y ipython tensorflow-gpu
+RUN conda install -y ipython tensorflow-gpu matplotlib
 RUN conda install -y -c ilastik pyklb
 
 # create expected dirs
