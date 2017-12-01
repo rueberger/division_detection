@@ -1,4 +1,4 @@
-FROM ubuntu/ubuntu:latest
+FROM ubuntu:latest
 
 # System packages
 RUN apt-get update && apt-get install -y curl git
