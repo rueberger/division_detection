@@ -7,9 +7,11 @@ RUN conda install -y ipython tensorflow matplotlib
 RUN conda install -y -c ilastik pyklb
 RUN conda install -y -c conda-forge pathos
 
-# create expected dirs
+# create expected dirs, symlink for extra robustness
 WORKDIR /results
-WORKDIR /logs
+RUN ln -s /results ~/results && \
+    ln -s /var/log ~/logs
+
 
 # install augment
 RUN pip install git+https://github.com/funkey/augment.git

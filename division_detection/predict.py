@@ -513,7 +513,11 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
     if not os.path.exists(pred_dir):
         os.makedirs(pred_dir)
 
-    log_path = os.path.expanduser('~/logs/division_detection')
+    log_path = os.path.expanduser('/var/log/division_detection')
+
+    if not os.path.exists(log_path):
+        os.makedirs(log_path)
+
     log_name = predictions_name + str(t_predict)
     logger = setup_logging(log_name, log_path)
     logger.info("Starting predictions at {}".format(t_predict))
