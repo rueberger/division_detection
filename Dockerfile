@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y curl git gcc
 
 RUN conda install -y ipython tensorflow matplotlib
 RUN conda install -y -c ilastik pyklb
+RUN conda install -y -c conda-forge pathos
 
 # create expected dirs
 WORKDIR /results
