@@ -76,3 +76,15 @@ The most basic usage is
 `python predict.py /data/path`
 
 The directory `/data/path` should contain only a directory named `klb` which contains the klb files you wish to process.
+
+## Training
+
+This release officially supports prediction only. While all code used to train the model is included and has inline
+docstrings, it has not been tested and high level docs are not available at this time.
+
+**Training will be supported in future releases**. We aim to release a fully featured package for machine
+learning on spatiotemporal bioimagery in 2018.
+
+## Disclaimer
+
+> THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
