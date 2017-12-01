@@ -17,11 +17,7 @@ from keras.backend.tensorflow_backend import set_session
 from division_detection.model import fetch_model
 from division_detection.preprocessing import preprocess_vol
 from division_detection.vol_preprocessing import in_mem_chunker, regular_chunker, fetch_vol_shape
-
-try:
-    from ipp_tools.log_tools import setup_logging
-except ImportError:
-    warn("Caught ImportError while trying to import ipp_tools, slurm integration unavailable")
+from division_detection.utils import setup_logging
 
 from pathos.multiprocessing import ProcessPool as Pool
 
