@@ -10,6 +10,7 @@ RUN rm Miniconda-latest-Linux-x86_64.sh
 ENV PATH=/miniconda/bin:${PATH}
 RUN conda update -y conda
 RUN conda install -y ipython tensorflow
+RUN conda install -y -c ilastik pyklb
 
 # create expected dirs
 WORKDIR /results
