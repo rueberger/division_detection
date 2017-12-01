@@ -63,3 +63,16 @@ is mounted at `/data`.
 ##### Old `nvidia-docker`
 
 `nvidia-docker run  --name div_det -it --mount type=volume,source=$DATA_VOL,destination=/data rueberger/division_detection:latest_gpu`
+
+
+### Generating predictions
+
+A script is provided for running predictions at `scripts/predict.py`. For now, run it with `python predict.py` - usage instructions will be printed.
+
+Later releases will automatically add a system wide alias for this.
+
+The most basic usage is
+
+`python predict.py /data/path`
+
+The directory `/data/path` should contain only a directory named `klb` which contains the klb files you wish to process.
