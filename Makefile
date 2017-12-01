@@ -6,14 +6,19 @@
 # build cpu image
 .PHONY: cpu_image
 cpu_image:
-	docker build -t rueberger/division_detection:latest -f Dockerfile ${CURDIR}
+	docker build -t division_detection:latest -f Dockerfile ${CURDIR}
 
 # build gpu image
 .PHONY: gpu_image
 gpu_image:
-	docker build -t rueberger/division_detection:latest_gpu -f Dockerfile.gpu ${CURDIR}
+	docker build -t division_detection:latest_gpu -f Dockerfile.gpu ${CURDIR}
+
+.PHONY: tag_images
+tag_images:
+	docker tag division_detection:latest rueberger/division_detection:latest && \
+	docker tag division_detection:latest_gpu rueberger/division_detection:latest_gpu
 
 # push images
 .PHONY: images
-images: cpu_image gpu_image
+images: tag_images
 	docker push rueberger/division_detection
