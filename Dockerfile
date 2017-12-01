@@ -19,3 +19,5 @@ WORKDIR /research
 ADD . /research/division_detection
 
 RUN pip install -e division_detection/
+
+CMD bash
