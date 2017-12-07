@@ -83,6 +83,10 @@ def predict_from_inbox(model_name, in_dir, chunk_size=(200, 150, 150), allowed_g
     """
     from division_detection.vol_preprocessing import write_klb_as_h5, save_bboxes_general
 
+    # expected downstream
+    if in_dir.endswith('/'):
+        in_dir = in_dir[:-1]
+
     klb_dir =  '{}/klb'.format(in_dir)
     h5_dir = '{}/h5'.format(in_dir)
     bbox_dir = '{}/bboxes'.format(in_dir)
