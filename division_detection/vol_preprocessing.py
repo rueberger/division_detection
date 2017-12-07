@@ -1782,7 +1782,7 @@ def general_regular_chunker(t_predict, in_dir, chunk_size, padding=(4, 22, 22)):
 
     output_chunk_size = [int(ax_size / ax_scale) - 2 * ax_pad for ax_size, ax_scale, ax_pad in zip(chunk_size, ax_scaling, padding)]
 
-    n_chunks_by_dim = [ceil(vol_ax_len / float(chunk_ax_len)) for vol_ax_len, chunk_ax_len in zip(vol_shape, output_chunk_size)]
+    n_chunks_by_dim = [int(ceil(vol_ax_len / float(chunk_ax_len))) for vol_ax_len, chunk_ax_len in zip(vol_shape, output_chunk_size)]
 
     try:
         print("Yielding chunks")
