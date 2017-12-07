@@ -1811,6 +1811,7 @@ def general_regular_chunker(t_predict, in_dir, chunk_size, padding=(4, 22, 22)):
                         yield chunk, chunk_coords
     except Exception as general_err:
         print("Caught exception: {}".format(general_err))
+        raise
     # Make sure we always close open files
     finally:
         for vol in t_stack:
