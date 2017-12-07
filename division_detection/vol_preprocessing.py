@@ -1976,9 +1976,7 @@ def save_bboxes_general(in_dir, out_dir, thresh=300):
     bbox_fpaths = ['{}/{}.json'.format(out_dir, fname[:-3]) for fname in fnames]
     h5_fpaths = ['{}/{}'.format(in_dir, fname) for fname in  fnames]
 
-    # don't use too much memory
-    pool = Pool()
-    bbox_list = pool.map(_get_bbox, h5_fpaths)
+    bbox_list = map(_get_bbox, h5_fpaths)
 
     for bbox, fpath in zip(bbox_list, bbox_fpaths):
         with open(fpath, 'w') as bbox_file:
