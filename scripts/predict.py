@@ -23,7 +23,7 @@ def main():
                        "Chunk size should be set to the largest chunk that will fit in GPU memory")
     # TODO: set default to largest for 11GB GPUs
     parser.add_argument('--chunk_size', help=chunk_size_help, type=int, nargs=3,
-                        default=[200, 150, 150])
+                        default=[200, 100, 100])
 
     allowed_gpus_help = ("The ids of the GPUs to use for this job. \n"
                          "Same numbering scheme as used for the CUDA_VISIBLE_DEVICES"
