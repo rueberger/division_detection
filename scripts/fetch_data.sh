@@ -9,3 +9,4 @@ mkdir -p ~/data/division_detection/klb
 mkdir -p ~/data/division_detection/projections
 mv Volume_*.projection.klb ~/data/division_detection/projections
 mv Volume_*.klb ~/data/division_detection/klb
+rm vols.zip
