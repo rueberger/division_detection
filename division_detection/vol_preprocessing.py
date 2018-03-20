@@ -1763,7 +1763,9 @@ def general_regular_chunker(t_predict, in_dir, chunk_size, padding=(4, 22, 22)):
     assert os.path.exists('{}/h5'.format(in_dir))
     assert os.path.exists('{}/bboxes'.format(in_dir))
 
-    vol_name_template = 'SPM00_TM{:0>6d}_CM00_CM01_CHN00.fusedStack.corrected.shifted.h5'
+    assert t_predict < 100, "Change vol_name_template in division_detection.vol_preprocessing.general_regular_chunker for support of larger t_predict values"
+
+    vol_name_template = 'Volume_{:0>2d}.h5'
     vol_path_template = in_dir + '/h5/' + vol_name_template
     vol_name = vol_name_template.format(t_predict)
     t_stack = [h5py.File(vol_path_template.format(t_idx), 'r')['vol'] for t_idx in range(t_predict - 3, t_predict + 4)]
