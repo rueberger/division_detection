@@ -77,8 +77,10 @@ As script for pulling example data is included. Here is how to use it:
 2. Run the container, mounting the data where expected:
 
    ``` docker run --runtime=nvidia --name div_det -it --mount type=bind,source=~/data/division_detection,destination=/data rueberger/division_detection:latest_gpu python division_detection/scripts/predict.py  /data```
-
-   Notice that here we use a bind-mount instead of putting the data in a proper volume as discussed above=. Doesn't matter to the container.  
+   
+   Notes:
+      * `~/` needs to expanded to the absolute path for `source=`
+      *  Notice that here we use a bind-mount instead of putting the data in a proper volume as discussed above=. Doesn't matter to the container.  
 
 ### Generating predictions
 
