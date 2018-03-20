@@ -107,7 +107,7 @@ def predict_from_inbox(model_name, in_dir, chunk_size=(200, 150, 150), allowed_g
     # now we can predi
     # extract the timepoints so we can figure out what we have to predict on
 
-    timepoints = [int(fname.split('_')[1][2:]) for fname in fnames]
+    timepoints = [int(fname.split('_')[1][:2]) for fname in fnames]
     tp_set = set(timepoints)
     valid_timepoints = []
     for t_idx in timepoints:
