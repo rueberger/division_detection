@@ -64,6 +64,21 @@ is mounted at `/data`.
 
 `nvidia-docker run  --name div_det -it --mount type=volume,source=$DATA_VOL,destination=/data rueberger/division_detection:latest_gpu`
 
+### Running the included example 
+
+As script for pulling example data is included. Here is how to use it:
+
+1. Run the download script: 
+
+   ``` source division_detection/scripts/fetch_data.sh  ```
+   
+   This downloads the example data set into `~/data/division_detection/klb`
+
+2. Run the container, mounting the data where expected:
+
+   ``` docker run --runtime=nvidia --name div_det -it --mount type=bind,source=~/data/division_detection,destination=/data rueberger/division_detection:latest_gpu python division_detection/scripts/predict.py  /data```
+
+   Notice that here we use a bind-mount instead of putting the data in a proper volume as discussed above=. Doesn't matter to the container.  
 
 ### Generating predictions
 
