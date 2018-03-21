@@ -575,7 +575,7 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
                         predict_queue.join_thread()
 
         except Exception as general_err:
-            logger.critical("Caught exception in writer: %s", general_err, type(general_err), t_predict)
+            logger.critical("Caught exception in writer: %s %s %s", general_err, type(general_err), t_predict)
 
 
 
