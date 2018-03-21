@@ -76,12 +76,14 @@ As script for pulling example data is included. Here is how to use it:
 
 2. Run the container, mounting the data where expected:
 
-   ``` docker run --runtime=nvidia --name div_det -it --mount type=bind,source=~/data/division_detection,destination=/data rueberger/division_detection:latest_gpu python division_detection/scripts/predict.py  /data```
+   ``` docker run --runtime=nvidia --name div_det -it --mount type=bind,source=~/data/division_detection,destination=/data rueberger/division_detection:latest_gpu python division_detection/scripts/predict.py  /data --chunk_size 50 100 100```
    
    Notes:
       * `~/` needs to expanded to the absolute path for `source=`
       *  Notice that here we use a bind-mount instead of putting the data in a proper volume as discussed above=. Doesn't matter to the container.  
-
+      * This took 8500MB gpu memory
+      * A single gpu is used by default. More may be used by appending `--allowed_gpus 0 1 2 3`, for instance, which would be used if 4 GPUs were available. The numbers following `--allowed_gpus` are the `$CUDA_VISIBLE_DEVICES` id of the GPUs
+      
 ### Generating predictions
 
 A script is provided for running predictions at `scripts/predict.py`. For now, run it with `python predict.py` - usage instructions will be printed.
