@@ -512,7 +512,7 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
     assert in_dir[-1] != '/'
     ds_name = in_dir.split('/')[-1]
 
-    pred_dir = '~/results/{}/{}/dense'.format(predictions_name, ds_name)
+    pred_dir = '/results/{}/{}/dense'.format(predictions_name, ds_name)
 
     if not os.path.exists(pred_dir):
         os.makedirs(pred_dir)
