@@ -17,13 +17,13 @@ datasetname = 'results';
 switch datasetname,
   case 'results',
     % TODO: paths actually start with ~/, not /, must expand $HOME
-    rawdatadir = '/data/division_detection/klb'
-    preddatadir = '/data/division_detection/results/dense/'
-    sparsepreddatadir = '/data/division_detection/results/sparse'
-    savedir = '/data/division_detection/results/detections'
-    % TODO: unclear what these are for
-    inmatfilestr = '/nrs/branson/MouseLineaging/imregionalmaxdata_dataset1';
-    inmatfilestr_conncomp = '/nrs/branson/MouseLineaging/conncompdata_dataset1';
+    rawdatadir = '/data/division_detection/klb';
+    preddatadir = '/data/division_detection/results/dense/';
+    sparsepreddatadir = '/data/division_detection/results/sparse';
+    savedir = '/data/division_detection/results/detections';
+    % TODO: are these output paths?
+    inmatfilestr = '/data/division_detection/results/imregionalmax';
+    inmatfilestr_conncomp = '/data/division_detection/results/conncompdata';
   case 'dataset_1',
     rawdatadir = '/media/KellerS7/SV1/KM_16-06-16/Mmu_E1_TmCherryxH2BeGFP_20160616_155129.corrected/Results/TimeFused.Corrected/*';
     preddatadir = '/nrs/turaga/bergera/division_detection/prediction_outbox/mk5_large_small_batch_balanced_good_reweight/full_dataset_1/dense';
