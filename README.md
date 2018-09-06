@@ -1,5 +1,5 @@
 # division_detection
-Cell-division classifier
+Cell-division classifier - supporting material for *In toto imaging and reconstruction of post-implantation mouse development at the single-cell level*, to appear in Cell. 
 
 
 ## Installation
