@@ -87,7 +87,7 @@ def predict_from_inbox(model_name, in_dir, chunk_size=(200, 150, 150), allowed_g
     if in_dir.endswith('/'):
         in_dir = in_dir[:-1]
 
-    klb_dir =  '{}/klb'.format(in_dir)
+    klb_dir = '{}/klb'.format(in_dir)
     h5_dir = '{}/h5'.format(in_dir)
     bbox_dir = '{}/bboxes'.format(in_dir)
 
@@ -117,8 +117,13 @@ def predict_from_inbox(model_name, in_dir, chunk_size=(200, 150, 150), allowed_g
         if t_rec_field <= tp_set:
             valid_timepoints.append(t_idx)
 
-    make_predictions_by_t_local_map_general(model_name, in_dir, valid_timepoints,
-                                            chunk_size=chunk_size)
+    make_predictions_by_t_local_map_general(
+        model_name,
+        in_dir,
+        valid_timepoints,
+        allowed_gpus=allowed_gpus,
+        chunk_size=chunk_size
+    )
 
 def validate_predictions(model_name):
     """ Runs through dense predictions ands cleans corrupt files
