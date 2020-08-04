@@ -549,7 +549,7 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
         try:
             # pull from the predict queue and write to disk
             with h5py.File('{}/{}.h5'.format(pred_dir, t_predict)) as prediction_file:
-                predictions =  prediction_file.create_dataset('predictions', shape=vol_shape, dtype='f')
+                predictions = prediction_file.create_dataset('predictions', shape=vol_shape, dtype='f')
 
                 chunk_idx = 0
                 while True:
@@ -558,7 +558,7 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
                         prediction, chunk_coord = next_tok
                         logger.info("Writing chunk at %s", chunk_coord)
                         # correct for padding
-                        pred_coord  = [chunk_coord[0] + 4,
+                        pred_coord = [chunk_coord[0] + 4,
                                        chunk_coord[1] + 22,
                                        chunk_coord[2] + 22]
                         pred_size = prediction.shape[2:]
