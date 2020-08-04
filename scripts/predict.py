@@ -16,7 +16,7 @@ def main():
     file_handler.setLevel(logging.DEBUG)
 
     stream_handler = logging.StreamHandler(stream=sys.stdout)
-    stream_handler.setLevel(logging.ERROR)
+    stream_handler.setLevel(logging.INFO)
 
     # create formatter and add to handler
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

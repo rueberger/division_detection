@@ -1758,6 +1758,7 @@ def regular_chunker(t_predict, chunk_size, padding=(4, 22, 22)):
             vol.file.close()
 
 
+# TODO: fix silent fails for too large chunk_sizes
 def general_regular_chunker(t_predict, process_dir, chunk_size, padding=(4, 22, 22)):
     """ Regular chunker that handles the general prediction format
     """

@@ -553,7 +553,6 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
         # read from the queue as fast as possible and predict on it
         with tf.device(device):
             while True:
-                print("fetching chunk")
                 try:
                     chunk, coord = next(chunk_gen)
                     logger.info("predicting chunk at %s", coord)
@@ -566,7 +565,7 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
 
 
     def writer(predict_queue):
-        logger = logging.getLogger("division_detection.{}.prediction_worker".format(__name__))
+        logger = logging.getLogger("division_detection.{}.prediction_writer".format(__name__))
 
         try:
             # pull from the predict queue and write to disk
