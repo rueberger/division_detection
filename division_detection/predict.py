@@ -405,8 +405,12 @@ def make_predictions_by_t_local_map_general(model_name, in_dir, timepoints,
 
 
     def _star_helper(args):
-        return _local_predict_helper_general(*args)
-
+        logger = logging.getLogger('division_detection.{}'.format(__name__))
+        try:
+            return _local_predict_helper_general(*args)
+        except Exception as general_err:
+            logger.critical("Caught exception in worker thread: %s %s", general_err, type(general_err))
+            raise
 
     print("Creating pool")
     pool = Pool(n_gpus)
@@ -503,7 +507,7 @@ def single_tp_nonblocking_predict(model, predictions_name, t_predict,
                         predict_queue.join_thread()
 
         except Exception as general_err:
-            logger.critical("Caught exception in writer: %s", general_err, type(general_err), t_predict)
+            logger.critical("Caught exception in writer: %s %s %s", general_err, type(general_err), t_predict)
 
 
 

@@ -1977,7 +1977,7 @@ def save_bboxes_general(in_dir, thresh=300):
         with h5py.File(fpath, 'r+') as volume:
             if 'bbox' not in volume:
                 bbox = bbox_nd(volume['vol'][:], thresh=thresh)
-                volume['bbox'] = volume.create_dataset('bbox', bbox)
+                volume['bbox'] = bbox
                 return True
             return False
 
