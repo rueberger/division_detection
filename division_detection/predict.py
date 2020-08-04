@@ -114,7 +114,7 @@ def predict_from_inbox(model_name, process_dir, chunk_size=(200, 150, 150), allo
     else:
         raise NotImplementedError("process_dir must be named either 'h5' or 'klb'. Passed value: {}".format(process_dir))
 
-    save_bboxes_general(h5_dir)
+    save_bboxes_general(process_dir)
 
     # extract the timepoints so we can figure out what we have to predict on
 
