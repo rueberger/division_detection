@@ -28,9 +28,8 @@ def main():
 
     parser = argparse.ArgumentParser(description="Runs division detector")
 
-    data_path_help = ("Absolute path to directory containing data klbs\n"
-                      "Example: '/data/ds1' where '/data/ds1/' contains a directory "
-                      "named 'klb' containing the raw images")
+    data_path_help = ("Absolute path to directory containing the raw images in h5 or klb format"
+                      "Directory must be named either h5 or klb, and contain only the eponymous filetype")
     parser.add_argument('data_dir', help=data_path_help)
 
 
