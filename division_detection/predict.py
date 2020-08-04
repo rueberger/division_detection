@@ -1,29 +1,23 @@
 """ This module contains prediction related methods
 """
 
+import os
+
+from multiprocessing import Queue, Process
+from warnings import warn
+from time import time
+
 import h5py
 
 import numpy as np
 import tensorflow as tf
-import os
 
-from multiprocessing import Queue, Process
-
-from warnings import warn
-
-from keras.models import load_model
-from keras.backend.tensorflow_backend import set_session
+from pathos.multiprocessing import ProcessPool as Pool
 
 from division_detection.model import fetch_model
 from division_detection.preprocessing import preprocess_vol
 from division_detection.vol_preprocessing import in_mem_chunker, regular_chunker, fetch_vol_shape
 from division_detection.utils import setup_logging
-
-from pathos.multiprocessing import ProcessPool as Pool
-
-from time import time
-
-from scipy.ndimage.interpolation import zoom
 
 CHUNK_SIZE = (515, 500, 500)
 STOP = 'STOP'
