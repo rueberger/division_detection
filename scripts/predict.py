@@ -30,7 +30,7 @@ def main():
                          "environment variable. \n"
                          "Job will be parallelized across available GPUs"
                          "Defaults to 0")
-    parser.add_argument('--allowed_gpus', help=allowed_gpus_help, type=int, nargs='+', default=0)
+    parser.add_argument('--allowed_gpus', help=allowed_gpus_help, type=int, nargs='+', default=[0])
 
     args = parser.parse_args()
 
