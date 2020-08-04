@@ -1963,27 +1963,20 @@ def save_bboxes(thresh=300, max_tp=None):
     with open(save_path, 'w') as bbox_file:
         json.dump(bboxes, bbox_file)
 
-def save_bboxes_general(in_dir, out_dir, thresh=300):
+def save_bboxes_general(in_dir, thresh=300):
     """ More general version that computes bboxes for all files in in_dir
-    and writes their bboxes as json files with the same name to out_dir
+    and writes their bboxes to the h5 file
     """
-    import json
-    from pathos.multiprocessing import Pool
-
-    def _get_bbox(fpath):
-        with h5py.File(fpath, 'r') as vol_file:
-            return bbox_nd(vol_file['vol'][:], thresh=thresh)
+    def _do_bbox(fpath):
+        with h5py.File(fpath, 'r+') as volume:
+            if 'bbox' not in volume:
+                bbox = bbox_nd(volume['vol'][:], thresh=thresh)
+                volume['bbox'] = volume.create_dataset('bbox', bbox)
 
     fnames = os.listdir(in_dir)
-    bbox_fpaths = ['{}/{}.json'.format(out_dir, fname[:-3]) for fname in fnames]
     h5_fpaths = ['{}/{}'.format(in_dir, fname) for fname in  fnames]
 
-    bbox_list = map(_get_bbox, h5_fpaths)
-
-    for bbox, fpath in zip(bbox_list, bbox_fpaths):
-        with open(fpath, 'w') as bbox_file:
-            json.dump(bbox, bbox_file)
-
+    map(_do_bbox, h5_fpaths)
 
 def continuous_augment(vol, rotation, flip_z):
     """ Apply a continuous augmentation to vol
