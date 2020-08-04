@@ -48,6 +48,7 @@ def main():
                          "Same numbering scheme as used for the CUDA_VISIBLE_DEVICES"
                          "environment variable. \n"
                          "Job will be parallelized across available GPUs"
+                         "Example: --allowed_gpus 0 1"
                          "Defaults to 0")
     parser.add_argument('--allowed_gpus', help=allowed_gpus_help, type=int, nargs='+', default=[0])
 
