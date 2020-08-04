@@ -4,6 +4,8 @@
 import numpy as np
 import os
 import math
+import logging
+
 import h5py
 import augment
 
@@ -1756,24 +1758,24 @@ def regular_chunker(t_predict, chunk_size, padding=(4, 22, 22)):
             vol.file.close()
 
 
-def general_regular_chunker(t_predict, in_dir, chunk_size, padding=(4, 22, 22)):
+def general_regular_chunker(t_predict, process_dir, chunk_size, padding=(4, 22, 22)):
     """ Regular chunker that handles the general prediction format
     """
     # check dir structure
-    assert os.path.exists('{}/h5'.format(in_dir))
-    assert os.path.exists('{}/bboxes'.format(in_dir))
+    assert process_dir.endswith('.h5')
 
     assert t_predict < 100, "Change vol_name_template in division_detection.vol_preprocessing.general_regular_chunker for support of larger t_predict values"
 
+    logger = logging.getLogger("division_detection.chunker")
+
     vol_name_template = 'Volume_{:0>2d}.h5'
-    vol_path_template = in_dir + '/h5/' + vol_name_template
+    vol_path_template = process_dir + '/' + vol_name_template
     vol_name = vol_name_template.format(t_predict)
     t_stack = [h5py.File(vol_path_template.format(t_idx), 'r')['vol'] for t_idx in range(t_predict - 3, t_predict + 4)]
     vol_shape = t_stack[0].shape
 
-    bbox_path = '{}/bboxes/{}.json'.format(in_dir, vol_name[:-3])
-    with open(bbox_path, 'r') as bbox_file:
-        bbox = json.load(bbox_file)
+    with h5py.File('{}/{}'.format(process_dir, vol_name), 'r') as volume:
+        bbox = volume['bbox']
         bbox = [
             (bbox[4], bbox[5]),
             (bbox[2], bbox[3]),
@@ -1783,11 +1785,13 @@ def general_regular_chunker(t_predict, in_dir, chunk_size, padding=(4, 22, 22)):
     ax_scaling = [1, 1, 1]
 
     output_chunk_size = [int(ax_size / ax_scale) - 2 * ax_pad for ax_size, ax_scale, ax_pad in zip(chunk_size, ax_scaling, padding)]
+    logger.info("Output chunk size: %s", output_chunk_size)
 
     n_chunks_by_dim = [int(ceil(vol_ax_len / float(chunk_ax_len))) for vol_ax_len, chunk_ax_len in zip(vol_shape, output_chunk_size)]
+    logger.info("Number of chunks per dimension: %s", n_chunks_by_dim)
 
     try:
-        print("Yielding chunks")
+        logger.info("Yielding chunks")
         for z_idx in range(n_chunks_by_dim[0]):
             z_coord = z_idx * output_chunk_size[0] * ax_scaling[0]
             if z_coord + chunk_size[0] >= vol_shape[0] and n_chunks_by_dim[0] > 1:
@@ -1812,7 +1816,7 @@ def general_regular_chunker(t_predict, in_dir, chunk_size, padding=(4, 22, 22)):
                         chunk_coords = (z_coord, int(y_coord / ax_scaling[1]), int(x_coord/ ax_scaling[2]))
                         yield chunk, chunk_coords
     except Exception as general_err:
-        print("Caught exception: {}".format(general_err))
+        logger.critical("Caught exception: %s", general_err)
         raise
     # Make sure we always close open files
     finally:
@@ -1967,16 +1971,23 @@ def save_bboxes_general(in_dir, thresh=300):
     """ More general version that computes bboxes for all files in in_dir
     and writes their bboxes to the h5 file
     """
+    logger = logging.getLogger('division_detection.{}'.format(__name__))
+
     def _do_bbox(fpath):
         with h5py.File(fpath, 'r+') as volume:
             if 'bbox' not in volume:
                 bbox = bbox_nd(volume['vol'][:], thresh=thresh)
                 volume['bbox'] = volume.create_dataset('bbox', bbox)
+                return True
+            return False
+
+
 
     fnames = os.listdir(in_dir)
     h5_fpaths = ['{}/{}'.format(in_dir, fname) for fname in  fnames]
 
-    map(_do_bbox, h5_fpaths)
+    computed = map(_do_bbox, h5_fpaths)
+    logger.info("Computed bounding boxes for %s volumes", sum(computed))
 
 def continuous_augment(vol, rotation, flip_z):
     """ Apply a continuous augmentation to vol

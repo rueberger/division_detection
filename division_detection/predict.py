@@ -1,7 +1,9 @@
+
 """ This module contains prediction related methods
 """
 
 import os
+import logging
 
 from multiprocessing import Queue, Process
 from warnings import warn
@@ -16,8 +18,13 @@ from pathos.multiprocessing import ProcessPool as Pool
 
 from division_detection.model import fetch_model
 from division_detection.preprocessing import preprocess_vol
-from division_detection.vol_preprocessing import in_mem_chunker, regular_chunker, fetch_vol_shape
-from division_detection.utils import setup_logging
+from division_detection.vol_preprocessing import (
+    in_mem_chunker,
+    regular_chunker,
+    fetch_vol_shape,
+    write_klb_as_h5,
+    save_bboxes_general
+)
 
 CHUNK_SIZE = (515, 500, 500)
 STOP = 'STOP'
@@ -57,15 +64,17 @@ def pipeline_predict(model_name, chunk_size=(200, 150, 150), make_projs=False, p
         pipeline_visualize(model_name)
 
 
-def predict_from_inbox(model_name, in_dir, chunk_size=(200, 150, 150), allowed_gpus=[0]):
-    """ Run predictions on all the files in in_dir
+def predict_from_inbox(model_name, process_dir, chunk_size=(200, 150, 150), allowed_gpus=[0]):
+    """ Run predictions on all the files in process_dir
+
+    Files can be provided in either .h5 or .klb formats. klb files will be rewritten as h5s
 
     Predictions will be saved to a directory in prediction_outbox with the same name as in_dir
 
     Args:
       model_name: name of model to use
-      in_dir: dir containing the files to predict on
-         must contain a dir named klb that contains the files themselves
+      process_dir: directory containing the files to predict on
+         directory must be named either klb or h5, and contain only files in that format
       chunk_size: size of chunks to proces volume in
       allowed_gpus: CUDA ids of GPUs to use
          job will be parallelized across GPUs
@@ -75,30 +84,38 @@ def predict_from_inbox(model_name, in_dir, chunk_size=(200, 150, 150), allowed_g
        where dataset_name is just the name of the folder containing the data
 
     """
-    from division_detection.vol_preprocessing import write_klb_as_h5, save_bboxes_general
+    logger = logging.getLogger('division_detection.{}'.format(__name__))
+    logger.debug("model_name: %s, process_dir: %s, chunk_size: %s, allowed_gpus: %s",
+                 model_name, process_dir, chunk_size, allowed_gpus)
+
+    assert os.path.exists(process_dir)
 
     # expected downstream
-    if in_dir.endswith('/'):
-        in_dir = in_dir[:-1]
+    process_dir = process_dir.strip('/')
 
-    klb_dir = '{}/klb'.format(in_dir)
-    h5_dir = '{}/h5'.format(in_dir)
-    bbox_dir = '{}/bboxes'.format(in_dir)
+    dir_name = process_dir.split('/')[-1]
+    fnames = os.listdir(process_dir)
 
-    assert os.path.exists(klb_dir)
-    os.mkdir(h5_dir)
-    os.mkdir(bbox_dir)
+    logger.info("Launching prediction job for %s volumes", len(fnames))
 
-    fnames = os.listdir(klb_dir)
-    print("Found {} files in {}".format(len(fnames), klb_dir))
+    if dir_name == 'h5':
+        assert all([fname.endswith('.h5') for fname in fnames])
+    elif dir_name == 'klb':
+        assert all([fname.endswith('.klb') for fname in fnames])
 
-    print("Converting to h5...")
-    write_klb_as_h5(klb_dir, h5_dir)
+        logger.info("Input files are .klbs, converting to .h5")
 
-    print("Computing bounding boxes...")
-    save_bboxes_general(h5_dir, bbox_dir)
+        h5_dir = '{}/h5'.format(process_dir.strip('/klb'))
+        os.mkdir(h5_dir)
 
-    # now we can predi
+        write_klb_as_h5(process_dir, h5_dir)
+
+        process_dir = h5_dir
+    else:
+        raise NotImplementedError("process_dir must be named either 'h5' or 'klb'. Passed value: {}".format(process_dir))
+
+    save_bboxes_general(h5_dir)
+
     # extract the timepoints so we can figure out what we have to predict on
 
     timepoints = [int(fname.split('_')[1][:2]) for fname in fnames]
@@ -113,7 +130,7 @@ def predict_from_inbox(model_name, in_dir, chunk_size=(200, 150, 150), allowed_g
 
     make_predictions_by_t_local_map_general(
         model_name,
-        in_dir,
+        process_dir.strip('/h5'),
         valid_timepoints,
         allowed_gpus=allowed_gpus,
         chunk_size=chunk_size
@@ -516,11 +533,8 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
     if not os.path.exists(pred_dir):
         os.makedirs(pred_dir)
 
-    log_path = '/var/log/division_detection.log'
-
-    log_name = predictions_name + str(t_predict)
-    logger = setup_logging(log_name, log_path)
-    logger.info("Starting predictions at %s", t_predict)
+    logger = logging.getLogger("division_detection.{}".format(__name__))
+    logger.info("Starting predictions for t = %s", t_predict)
 
     h5_dir = in_dir + '/h5'
     ex_vol_path = '{}/{}'.format(h5_dir, os.listdir(h5_dir)[0])
@@ -529,7 +543,7 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
 
 
     def predicter(predict_queue):
-        logger = setup_logging("inference_worker.log", log_path)
+        logger = logging.getLogger("division_detection.{}.inference_worker".format(__name__))
 
         chunk_gen = general_regular_chunker(t_predict, in_dir, chunk_size=chunk_size)
         # read from the queue as fast as possible and predict on it
@@ -548,7 +562,7 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
 
 
     def writer(predict_queue):
-        logger = setup_logging("prediction_writer.log", log_path)
+        logger = logging.getLogger("division_detection.{}.prediction_worker".format(__name__))
 
         try:
             # pull from the predict queue and write to disk
@@ -574,23 +588,26 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
                         if chunk_idx % 10 == 0:
                             prediction_file.flush()
                     else:
+                        logger.info("Caught stop iteration. ")
                         predict_queue.close()
                         predict_queue.join_thread()
 
         except Exception as general_err:
             logger.critical("Caught exception in writer: %s %s %s", general_err, type(general_err), t_predict)
+            raise
 
 
 
     out_queue = Queue()
 
-    logger.info("starting writer process")
+    logger.info("Starting writer process")
     writer_p = Process(target=writer, args=((out_queue,)))
     writer_p.start()
 
+    logger.info("Starting prediction worker")
     predicter(out_queue)
 
-    logger.info("stopping writer process")
+    logger.info("Stopping writer process")
     writer_p.join()
 
 
