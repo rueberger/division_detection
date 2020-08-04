@@ -4,7 +4,7 @@
 from setuptools import setup
 
 setup(name='div_detection',
-      version='0.1',
+      version='0.2',
       description='Cell-division detection',
       author='Andrew Berger',
       author_email='andbberger@gmail.com',
