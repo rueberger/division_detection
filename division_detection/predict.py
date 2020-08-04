@@ -529,6 +529,8 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
 
 
     def predicter(predict_queue):
+        logger = setup_logging("inference_worker.log", log_path)
+
         chunk_gen = general_regular_chunker(t_predict, in_dir, chunk_size=chunk_size)
         # read from the queue as fast as possible and predict on it
         with tf.device(device):
@@ -546,6 +548,8 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
 
 
     def writer(predict_queue):
+        logger = setup_logging("prediction_writer.log", log_path)
+
         try:
             # pull from the predict queue and write to disk
             with h5py.File('{}/{}.h5'.format(pred_dir, t_predict)) as prediction_file:
