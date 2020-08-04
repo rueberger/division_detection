@@ -91,7 +91,7 @@ def predict_from_inbox(model_name, process_dir, chunk_size=(200, 150, 150), allo
     assert os.path.exists(process_dir)
 
     # expected downstream
-    process_dir = process_dir.strip('/')
+    process_dir = process_dir.rstrip('/')
 
     dir_name = process_dir.split('/')[-1]
     fnames = os.listdir(process_dir)
@@ -105,7 +105,7 @@ def predict_from_inbox(model_name, process_dir, chunk_size=(200, 150, 150), allo
 
         logger.info("Input files are .klbs, converting to .h5")
 
-        h5_dir = '{}/h5'.format(process_dir.strip('/klb'))
+        h5_dir = '{}/h5'.format(process_dir.rstrip('/klb'))
         os.mkdir(h5_dir)
 
         write_klb_as_h5(process_dir, h5_dir)
@@ -130,7 +130,7 @@ def predict_from_inbox(model_name, process_dir, chunk_size=(200, 150, 150), allo
 
     make_predictions_by_t_local_map_general(
         model_name,
-        process_dir.strip('/h5'),
+        process_dir.rstrip('/h5'),
         valid_timepoints,
         allowed_gpus=allowed_gpus,
         chunk_size=chunk_size
