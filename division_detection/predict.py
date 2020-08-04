@@ -549,7 +549,7 @@ def single_tp_nonblocking_predict_general(model, predictions_name, in_dir, t_pre
     def predicter(predict_queue):
         logger = logging.getLogger("division_detection.{}.inference_worker".format(__name__))
 
-        chunk_gen = general_regular_chunker(t_predict, in_dir, chunk_size=chunk_size)
+        chunk_gen = general_regular_chunker(t_predict, h5_dir, chunk_size=chunk_size)
         # read from the queue as fast as possible and predict on it
         with tf.device(device):
             while True:

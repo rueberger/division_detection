@@ -1762,7 +1762,7 @@ def general_regular_chunker(t_predict, process_dir, chunk_size, padding=(4, 22, 
     """ Regular chunker that handles the general prediction format
     """
     # check dir structure
-    assert process_dir.endswith('.h5')
+    assert process_dir.endswith('/h5')
 
     assert t_predict < 100, "Change vol_name_template in division_detection.vol_preprocessing.general_regular_chunker for support of larger t_predict values"
 
