@@ -1,5 +1,11 @@
-# division_detection
-Cell-division classifier - supporting material for *In toto imaging and reconstruction of post-implantation mouse development at the single-cell level*, to appear in Cell.
+# Division Detection
+
+This repository provides the cell-division classifier used in the paper:
+
+> In toto imaging and reconstruction of post-implantation mouse development at the single-cell level<br>
+> Katie McDole, Léo Guignard, Fernando Amat, Andrew Berger, Grégoire Malandain, Loïc A. Royer, Srinivas C. Turaga, Kristin Branson, and Philipp J. Keller<br>
+> Cell, 2018<br>
+> https://www.sciencedirect.com/science/article/pii/S0092867418312431
 
 
 ## Installation
